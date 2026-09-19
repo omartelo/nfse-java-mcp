@@ -35,6 +35,17 @@ class CertificadoA1Test {
     }
 
     @Test
+    void shouldExtractAlphanumericCnpjFromSubject() throws Exception {
+        char[] password = "senha-teste".toCharArray();
+        Path certificatePath = tempDir.resolve("certificado-alfanumerico.p12");
+        TestPkcs12Factory.create(certificatePath, password, "nfse-test", "12ABC34501DE35");
+
+        CertificadoA1 certificado = CertificadoA1.fromFile(certificatePath, password);
+
+        assertEquals("12ABC34501DE35", certificado.cpfCnpj().orElseThrow());
+    }
+
+    @Test
     void shouldRejectWrongPasswordWithoutLeakingThePassword() throws Exception {
         char[] password = "senha-correta".toCharArray();
         Path certificatePath = tempDir.resolve("certificado-teste.p12");

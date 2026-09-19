@@ -12,13 +12,15 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class CertificadoA1 {
-    private static final Pattern CPF_CNPJ_PATTERN = Pattern.compile("(?<!\\d)(\\d{14}|\\d{11})(?!\\d)");
+    private static final Pattern CPF_CNPJ_PATTERN =
+        Pattern.compile("(?<![A-Z0-9])([A-Z0-9]{12}[0-9]{2}|[0-9]{11})(?![A-Z0-9])");
 
     private final Path path;
     private final String alias;
@@ -101,7 +103,7 @@ public final class CertificadoA1 {
     }
 
     public Optional<String> cpfCnpj() {
-        Matcher matcher = CPF_CNPJ_PATTERN.matcher(subject());
+        Matcher matcher = CPF_CNPJ_PATTERN.matcher(subject().toUpperCase(Locale.ROOT));
         if (matcher.find()) {
             return Optional.of(matcher.group(1));
         }

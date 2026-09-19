@@ -1,6 +1,7 @@
 package br.com.nfse.sdk.xml.evento;
 
 import java.time.OffsetDateTime;
+import java.util.Locale;
 import java.util.Objects;
 
 public record CancelamentoNfse(
@@ -26,9 +27,9 @@ public record CancelamentoNfse(
         if (chaveAcesso.isBlank()) {
             throw new IllegalArgumentException("Chave de acesso da NFS-e e obrigatoria.");
         }
-        String documento = onlyDigits(cpfCnpjAutor);
+        String documento = normalizeDocumento(cpfCnpjAutor);
         if (documento.length() != 11 && documento.length() != 14) {
-            throw new IllegalArgumentException("CPF/CNPJ do autor deve ter 11 ou 14 digitos.");
+            throw new IllegalArgumentException("CPF/CNPJ do autor deve ter 11 ou 14 caracteres.");
         }
         cpfCnpjAutor = documento;
         if (numeroPedido < 1 || numeroPedido > 999) {
@@ -58,7 +59,7 @@ public record CancelamentoNfse(
         return cpfCnpjAutor.length() == 14;
     }
 
-    private static String onlyDigits(String value) {
-        return value.replaceAll("\\D", "");
+    private static String normalizeDocumento(String value) {
+        return value.replaceAll("[^A-Za-z0-9]", "").toUpperCase(Locale.ROOT);
     }
 }
